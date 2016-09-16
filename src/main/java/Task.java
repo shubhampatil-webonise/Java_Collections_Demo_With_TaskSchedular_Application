@@ -1,13 +1,11 @@
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.UUID;
 
-
-/**
- * Created by webonise on 15/9/16.
- */
 public class Task implements Comparable<Task> {
 
-    final UUID taskId;
-    int taskPriority;
+    private final UUID taskId;
+    private int taskPriority;
 
     Task(int taskPriority){
         this.taskId = UUID.randomUUID();
@@ -23,7 +21,7 @@ public class Task implements Comparable<Task> {
     }
 
     public void execute(){
-        System.out.println("Executing Task : " + String.valueOf(taskId));
+        System.out.println("Executing Task : " + taskId);
     }
 
     @Override
@@ -31,28 +29,39 @@ public class Task implements Comparable<Task> {
 
         if(this.getTaskPriority() > task.getTaskPriority()){
             return 1;
-        }else{
+        }else if(this.getTaskPriority() < task.getTaskPriority()){
             return -1;
+        }else{
+            return 0;
         }
     }
+
 
     @Override
     public boolean equals(Object taskToCompare) {
         if (this == taskToCompare) return true;
-        if (!(taskToCompare instanceof Task)) return false;
 
-        Task task = (Task) taskToCompare;
+        if (taskToCompare instanceof Task){
 
+            Task task = (Task)taskToCompare;
 
-        if (taskPriority != task.taskPriority) return false;
-        return taskId.equals(task.taskId);
+            EqualsBuilder equalsBuilder = new EqualsBuilder();
+            equalsBuilder.append(this.getTaskId(), task.getTaskId());
+            equalsBuilder.append(this.getTaskPriority(), task.getTaskPriority());
 
+            return equalsBuilder.isEquals();
+        }
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int result = taskId.hashCode();
-        result = 31 * result + taskPriority;
-        return result;
+
+        HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
+        hashCodeBuilder.append(this.getTaskId());
+        hashCodeBuilder.append(this.getTaskPriority());
+
+        return hashCodeBuilder.toHashCode();
     }
 }
