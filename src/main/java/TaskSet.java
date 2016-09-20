@@ -5,15 +5,20 @@ import java.util.UUID;
 public class TaskSet {
     private final HashSet<UUID> setOfTasks;
 
-    TaskSet(){
+    TaskSet() {
         setOfTasks = new HashSet<>();
     }
 
-    public void addToTaskSet(UUID taskId){
+    public void addToTaskSet(UUID taskId) {
         setOfTasks.add(taskId);
     }
 
-    public Iterator getIterator(){
-        return setOfTasks.iterator();
+    public void printTaskSet() {
+        Iterator<UUID> setIterator = setOfTasks.iterator();
+
+        while (setIterator.hasNext()) {
+            UUID taskId = setIterator.next();
+            System.out.println(" Task Id : " + taskId + "\n");
+        }
     }
 }

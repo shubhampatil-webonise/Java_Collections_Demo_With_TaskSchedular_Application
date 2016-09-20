@@ -1,9 +1,9 @@
 
 public class SchedularFactory {
 
-    public TaskSchedular getTaskSchedular(SchedularType schedular, int queueSize){
+    public TaskSchedular getTaskSchedular(SchedularType schedular, int queueSize) {
 
-        switch (schedular){
+        switch (schedular) {
             case FIFO:
                 return new FIFOSchedular(queueSize);
 

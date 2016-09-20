@@ -1,7 +1,10 @@
 
 public interface TaskSchedular {
-    void addNewTaskToQueueAndMap(Task task);
-    void printTaskQueue();
-    Task fetchTaskFromQueueForExecution();
-    void printTaskGroupsBasedOnPriority();
+    void addTask(Task task);
+
+    void printTaskList();
+
+    Task fetchTaskForExecution();
+
+    void printTaskGroups();
 }

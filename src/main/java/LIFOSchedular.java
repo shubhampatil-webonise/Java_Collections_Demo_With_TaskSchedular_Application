@@ -1,10 +1,8 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 public class LIFOSchedular implements TaskSchedular {
@@ -13,39 +11,37 @@ public class LIFOSchedular implements TaskSchedular {
     private final Map<Integer, TaskSet> taskGroupsBasedOnPriority;
     private final int queueCapacity;
 
-    LIFOSchedular(int queueCapacity){
+    LIFOSchedular(int queueCapacity) {
         this.taskList = new ArrayList<Task>(queueCapacity);
         this.queueCapacity = queueCapacity;
         this.taskGroupsBasedOnPriority = new HashMap<Integer, TaskSet>();
     }
 
     @Override
-    public void addNewTaskToQueueAndMap(Task task) {
+    public void addTask(Task task) {
 
-        if( taskList.size() < queueCapacity) {
-            taskList.add(task);
+        if (taskList.size() < queueCapacity) {
+            addTaskToList(task);
             addTaskToTaskMapBasedOnPriority(task);
-            System.out.println("New task added to Task List.\n");
-            printTaskQueue();
-        }
-        else
+            printTaskList();
+        } else
             System.out.println("Error : Can't add new task. Task List is full.\n");
     }
 
     @Override
-    public void printTaskQueue() {
+    public void printTaskList() {
 
         System.out.println("Tasks currently present in Task List :\n");
 
         for (Task task : taskList) {
-            System.out.println("Task Id :" + String.valueOf(task.getTaskId()) + ", Priority :" + String.valueOf(task.getTaskPriority())+"\n");
+            System.out.println("Task Id :" + String.valueOf(task.getTaskId()) + ", Priority :" + String.valueOf(task.getTaskPriority()) + "\n");
         }
     }
 
     @Override
-    public Task fetchTaskFromQueueForExecution() {
+    public Task fetchTaskForExecution() {
 
-        if(!taskList.isEmpty()){
+        if (!taskList.isEmpty()) {
             Task task = taskList.get(taskList.size() - 1);
             taskList.remove(taskList.size() - 1);
             return task;
@@ -53,12 +49,16 @@ public class LIFOSchedular implements TaskSchedular {
         throw new IllegalArgumentException("Task List is Empty");
     }
 
+    private void addTaskToList(Task task) {
+        taskList.add(task);
+        System.out.println("New task added to Task List.\n");
+    }
 
-    private void addTaskToTaskMapBasedOnPriority(Task task){
+    private void addTaskToTaskMapBasedOnPriority(Task task) {
 
-        if(taskGroupsBasedOnPriority.containsKey(task.getTaskPriority())){
+        if (taskGroupsBasedOnPriority.containsKey(task.getTaskPriority())) {
             taskGroupsBasedOnPriority.get(task.getTaskPriority()).addToTaskSet(task.getTaskId());
-        }else{
+        } else {
             TaskSet taskSetWithSamePriority = new TaskSet();
             taskSetWithSamePriority.addToTaskSet(task.getTaskId());
             taskGroupsBasedOnPriority.put(task.getTaskPriority(), taskSetWithSamePriority);
@@ -66,27 +66,19 @@ public class LIFOSchedular implements TaskSchedular {
     }
 
     @Override
-    public void printTaskGroupsBasedOnPriority() {
+    public void printTaskGroups() {
 
-        if(taskGroupsBasedOnPriority.isEmpty()){
+        if (taskGroupsBasedOnPriority.isEmpty()) {
             System.out.println("Map of Task Groups is empty !\n");
             return;
         }
 
         Iterator<Integer> mapIterator = taskGroupsBasedOnPriority.keySet().iterator();
 
-        while (mapIterator.hasNext()){
-
+        while (mapIterator.hasNext()) {
             Integer taskPriority = mapIterator.next();
-            System.out.println("Priority : " +  taskPriority + "\n");
-
-            Iterator<UUID> setIterator = taskGroupsBasedOnPriority.get(taskPriority).getIterator();
-
-            while (setIterator.hasNext()){
-                UUID taskId = setIterator.next();
-                System.out.println(" Task Id : " + taskId + "\n");
-            }
-
+            System.out.println("Priority : " + taskPriority + "\n");
+            taskGroupsBasedOnPriority.get(taskPriority).printTaskSet();
             System.out.println("=============================================\n\n");
         }
     }

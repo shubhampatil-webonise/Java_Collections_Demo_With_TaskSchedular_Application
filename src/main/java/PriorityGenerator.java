@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class PriorityGenerator {
 
-    public int generatePriority(){
+    public int generatePriority() {
         Random random = new Random();
 
         int maxPriority = 20;

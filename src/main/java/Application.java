@@ -10,25 +10,25 @@ public class Application {
     private TaskSchedular taskSchedular;
     private int queueCapacity;
 
-    Application(){
+    Application() {
         in = new Scanner(System.in);
         schedularFactory = new SchedularFactory();
         priorityGenerator = new PriorityGenerator();
     }
 
-    public void start(){
-        try{
+    public void start() {
+        try {
             displayMainMenuAndGetSchedularType();
             getInputAndSetTaskListCapacity();
             selectTaskSchedularBasedOnType();
             selectSchedularOperation();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void displayMainMenuAndGetSchedularType(){
+    private void displayMainMenuAndGetSchedularType() {
 
         System.out.println("Select a schedular ...\n");
         System.out.println("1. FIFO Schedular (Enter FIFO) \n");
@@ -39,49 +39,49 @@ public class Application {
         typeOfSchedular = in.next();
     }
 
-    private void getInputAndSetTaskListCapacity(){
+    private void getInputAndSetTaskListCapacity() {
         System.out.println("Enter Task Queue size : ");
         queueCapacity = in.nextInt();
     }
 
-    private void selectTaskSchedularBasedOnType(){
-        try{
+    private void selectTaskSchedularBasedOnType() {
+        try {
             SchedularType schedular = SchedularType.getSchedularBasedOnString(typeOfSchedular);
             taskSchedular = schedularFactory.getTaskSchedular(schedular, queueCapacity);
             System.out.println("New " + schedular.name() + " schedular created !\n");
 
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             System.exit(1);
         }
     }
 
-    private void selectSchedularOperation(){
+    private void selectSchedularOperation() {
 
         boolean continueLooping = true;
 
-        while(continueLooping){
+        while (continueLooping) {
 
             displaySchedularSpecificMenu();
             int choice = in.nextInt();
 
-            try{
-                switch (choice){
-                    case 1 :
-                        taskSchedular.addNewTaskToQueueAndMap(new Task(priorityGenerator.generatePriority()));
+            try {
+                switch (choice) {
+                    case 1:
+                        taskSchedular.addTask(new Task(priorityGenerator.generatePriority()));
                         break;
 
-                    case 2 :
-                        taskSchedular.printTaskQueue();
+                    case 2:
+                        taskSchedular.printTaskList();
                         break;
 
-                    case 3 :
-                        Task task = taskSchedular.fetchTaskFromQueueForExecution();
+                    case 3:
+                        Task task = taskSchedular.fetchTaskForExecution();
                         task.execute();
                         break;
 
-                    case 4 :
-                        taskSchedular.printTaskGroupsBasedOnPriority();
+                    case 4:
+                        taskSchedular.printTaskGroups();
                         break;
 
                     case 5:
@@ -91,13 +91,13 @@ public class Application {
                     default:
                         throw new IllegalArgumentException("Invalid Choice");
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void displaySchedularSpecificMenu(){
+    private void displaySchedularSpecificMenu() {
         System.out.println("1. Add new Task to queue.\n");
         System.out.println("2. Print current task queue.\n");
         System.out.println("3. Fetch task from Queue to Execute.\n");
