@@ -9,24 +9,23 @@ import java.util.UUID;
 
 public class PriorityBasedSchedular implements TaskSchedular {
 
-    List<Task> taskList;
-    Map<Integer, HashSet<UUID>> taskGroupsBasedOnPriority;
-    final int queueCapacity;
+    private final List<Task> taskList;
+    private final Map<Integer, TaskSet> taskGroupsBasedOnPriority;
+    private final int queueCapacity;
 
     PriorityBasedSchedular(int queueCapacity){
         this.taskList = new ArrayList<Task>(queueCapacity);
         this.queueCapacity = queueCapacity;
-        this.taskGroupsBasedOnPriority = new HashMap<Integer, HashSet<UUID>>();
+        this.taskGroupsBasedOnPriority = new HashMap<Integer, TaskSet>();
     }
 
+    @Override
     public void addNewTaskToQueueAndMap(Task task) {
 
         if( taskList.size() < queueCapacity){
             taskList.add(task);
             sortTaskQueueBasedOnPriority();
-
             addTaskToTaskMapBasedOnPriority(task);
-
             System.out.println("New task added to Task List.\n");
             printTaskQueue();
         }
@@ -34,6 +33,7 @@ public class PriorityBasedSchedular implements TaskSchedular {
             System.out.println("Error : Can't add new task. Task List is full.\n");
     }
 
+    @Override
     public void printTaskQueue() {
 
         System.out.println("Tasks currently present in Task List :\n");
@@ -43,6 +43,7 @@ public class PriorityBasedSchedular implements TaskSchedular {
         }
     }
 
+    @Override
     public Task fetchTaskFromQueueForExecution() {
 
         if(!taskList.isEmpty()){
@@ -57,20 +58,18 @@ public class PriorityBasedSchedular implements TaskSchedular {
     }
 
 
-    public void sortTaskQueueBasedOnPriority(){
+    private void sortTaskQueueBasedOnPriority(){
         Collections.sort(taskList);
     }
 
-    public void addTaskToTaskMapBasedOnPriority(Task task){
+    private void addTaskToTaskMapBasedOnPriority(Task task){
 
         if(taskGroupsBasedOnPriority.containsKey(task.getTaskPriority())){
-            taskGroupsBasedOnPriority.get(task.getTaskPriority()).add(task.getTaskId());
+            taskGroupsBasedOnPriority.get(task.getTaskPriority()).addToTaskSet(task.getTaskId());
         }else{
-
-            HashSet<UUID> taskSetWithSamePriority = new HashSet<UUID>();
-            taskSetWithSamePriority.add(task.getTaskId());
+            TaskSet taskSetWithSamePriority = new TaskSet();
+            taskSetWithSamePriority.addToTaskSet(task.getTaskId());
             taskGroupsBasedOnPriority.put(task.getTaskPriority(), taskSetWithSamePriority);
-
         }
     }
 
@@ -89,7 +88,7 @@ public class PriorityBasedSchedular implements TaskSchedular {
             Integer taskPriority = mapIterator.next();
             System.out.println("Priority : " +  taskPriority + "\n");
 
-            Iterator<UUID> setIterator = taskGroupsBasedOnPriority.get(taskPriority).iterator();
+            Iterator<UUID> setIterator = taskGroupsBasedOnPriority.get(taskPriority).getIterator();
 
             while (setIterator.hasNext()){
                 UUID taskId = setIterator.next();

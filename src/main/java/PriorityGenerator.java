@@ -1,8 +1,8 @@
 import java.util.Random;
 
-public class SchedularUtilities {
+public class PriorityGenerator {
 
-    public int randomPriorityGenerator(){
+    public int generatePriority(){
         Random random = new Random();
 
         int maxPriority = 20;

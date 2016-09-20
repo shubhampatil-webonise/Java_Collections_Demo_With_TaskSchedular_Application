@@ -6,9 +6,8 @@ public enum SchedularType {
     static SchedularType getSchedularBasedOnString(String choice){
 
         for (SchedularType schedular : SchedularType.values()){
-            if(schedular.name().equalsIgnoreCase(choice)) return schedular;
+            if(schedular.name().equalsIgnoreCase(choice)) return SchedularType.valueOf(schedular.name());
         }
-
         throw new IllegalArgumentException("Schedular Not found !");
     }
 }

@@ -2,24 +2,30 @@ import java.util.Scanner;
 
 public class Application {
 
-    private Scanner in;
-    private SchedularFactory schedularFactory;
+    private final Scanner in;
+    private final SchedularFactory schedularFactory;
+    private final PriorityGenerator priorityGenerator;
+
     private String typeOfSchedular;
     private TaskSchedular taskSchedular;
     private int queueCapacity;
-    private SchedularUtilities schedularUtilities;
 
     Application(){
         in = new Scanner(System.in);
         schedularFactory = new SchedularFactory();
-        schedularUtilities = new SchedularUtilities();
+        priorityGenerator = new PriorityGenerator();
     }
 
     public void start(){
-        displayMainMenuAndGetSchedularType();
-        getInputAndSetTaskListCapacity();
-        selectTaskSchedularBasedOnType();
-        selectSchedularOperation();
+        try{
+            displayMainMenuAndGetSchedularType();
+            getInputAndSetTaskListCapacity();
+            selectTaskSchedularBasedOnType();
+            selectSchedularOperation();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void displayMainMenuAndGetSchedularType(){
@@ -39,33 +45,13 @@ public class Application {
     }
 
     private void selectTaskSchedularBasedOnType(){
-
         try{
-
             SchedularType schedular = SchedularType.getSchedularBasedOnString(typeOfSchedular);
-
-            switch (schedular){
-                case FIFO:
-                    taskSchedular = schedularFactory.getTaskSchedular(SchedularType.FIFO, queueCapacity);
-                    break;
-
-                case LIFO:
-                    taskSchedular = schedularFactory.getTaskSchedular(SchedularType.LIFO, queueCapacity);
-                    break;
-
-                case PRIORITY_BASED:
-                    taskSchedular = schedularFactory.getTaskSchedular(SchedularType.PRIORITY_BASED, queueCapacity);
-                    break;
-
-                default:
-                    throw new IllegalArgumentException("Schedular Not found !");
-            }
-
+            taskSchedular = schedularFactory.getTaskSchedular(schedular, queueCapacity);
             System.out.println("New " + schedular.name() + " schedular created !\n");
 
-
         }catch (IllegalArgumentException e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }
@@ -82,7 +68,7 @@ public class Application {
             try{
                 switch (choice){
                     case 1 :
-                        taskSchedular.addNewTaskToQueueAndMap(new Task(schedularUtilities.randomPriorityGenerator()));
+                        taskSchedular.addNewTaskToQueueAndMap(new Task(priorityGenerator.generatePriority()));
                         break;
 
                     case 2 :
@@ -105,15 +91,13 @@ public class Application {
                     default:
                         throw new IllegalArgumentException("Invalid Choice");
                 }
-
             }catch (Exception e){
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
     private void displaySchedularSpecificMenu(){
-
         System.out.println("1. Add new Task to queue.\n");
         System.out.println("2. Print current task queue.\n");
         System.out.println("3. Fetch task from Queue to Execute.\n");
